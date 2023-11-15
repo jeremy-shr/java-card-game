@@ -66,8 +66,6 @@ public class Pack {
             if (myFile.exists()) {
                 while (myReader.hasNextLine()) {
                     lines++;
-                    String data = myReader.nextLine();
-                    System.out.println(data);
                 }
                 myReader.close();
                 if (lines == 8 * players) {
