@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.ArrayList;
 import java.io.File;
 import java.io.FileNotFoundException;
 
@@ -24,6 +25,7 @@ public class Pack {
        
         Pack myPack = new Pack(nbOfPlayers, packFile);
         boolean valid = myPack.validPack(myPack.getNumberOfPlayers(),myPack.getPackFile());
+        //System.out.println(valid);
     
     }
 
@@ -37,6 +39,7 @@ public class Pack {
     
     public Boolean validPack(int players,String fileName){
         File myFile = new File(fileName);
+        ArrayList<String> cardsData = new ArrayList<>();
         int lines = 0;
         try {
             Scanner myReader = new Scanner(myFile);
@@ -44,11 +47,14 @@ public class Pack {
                 while (myReader.hasNextLine()) {
                     lines++;
                     String data = myReader.nextLine();
-                    System.out.println(data);
+                    //System.out.println(data);
+                    cardsData.add(data);
+
                 }
-                myReader.close();
                 if (lines == 8*players){
-                   return true; 
+                    System.out.println(cardsData);
+                    myReader.close();
+                    return true; 
                 }
                 
             }
