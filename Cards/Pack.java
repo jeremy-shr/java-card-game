@@ -1,62 +1,76 @@
 import java.util.Scanner;
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class Pack {
     private int nbOfPlayers;
-    private String packFile;
+    private String packFileName;
+    private Queue<Card> packCards;
 
-    public Pack(int n,String location) {
+    public Pack(int n, String location) {
         this.nbOfPlayers = n;
-        this.packFile = location;
+        this.packFileName = location;
+
+        File myFile = new File(location);
+        boolean valid = this.validPack(n, location);
+        if (!valid) {
+            throw new Error("Pack is not valid");
+        }
+        Queue<Card> packCards = new LinkedList<>();
+
+        try {
+            Scanner myReader = new Scanner(myFile);
+            if (myFile.exists()) {
+                String line;
+                while ((line = myReader.nextLine()) != null) {
+                    packCards.add(new Card(line));
+                }
+                myReader.close();
+                this.packCards = packCards;
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading the file");
+        }
     }
 
-
-    public static void main(String[] args){
-        
-        Scanner userInput = new Scanner(System.in);
-        System.out.println("Please enter the number of players:");   
-        int nbOfPlayers = userInput.nextInt();
-
-        Scanner userInput2 = new Scanner(System.in);
-        System.out.println("Please enter location of pack to load:");   
-        String packFile = userInput2.nextLine();
-       
-        Pack myPack = new Pack(nbOfPlayers, packFile);
-        boolean valid = myPack.validPack(myPack.getNumberOfPlayers(),myPack.getPackFile());
-        //System.out.println(valid);
-    
+    public void distributeCards() {
+        int n = this.nbOfPlayers;
+        while ((this.packCards.size() > 4 * n)) {
+            Card pickedCard = packCards.poll();
+            // TODO: Give picked card to each player in round-robin fashion until each has
+            // 4.
+        }
+        // TODO: Split remaining cards into 4 seperate decks.
     }
 
-    public int getNumberOfPlayers(){
-        return nbOfPlayers;
+    public int getNumberOfPlayers() {
+        return this.nbOfPlayers;
     }
 
-    public String getPackFile(){
-        return packFile;
+    public String getPackFileName() {
+        return this.packFileName;
     }
-    
-    public Boolean validPack(int players,String fileName){
+
+    public Queue<Card> getPackCards() {
+        return this.packCards;
+    }
+
+    public Boolean validPack(int players, String fileName) {
         File myFile = new File(fileName);
-        ArrayList<String> cardsData = new ArrayList<>();
         int lines = 0;
         try {
             Scanner myReader = new Scanner(myFile);
-            if (myFile.exists()){
+            if (myFile.exists()) {
                 while (myReader.hasNextLine()) {
                     lines++;
-                    String data = myReader.nextLine();
-                    //System.out.println(data);
-                    cardsData.add(data);
-
                 }
-                if (lines == 8*players){
-                    System.out.println(cardsData);
-                    myReader.close();
-                    return true; 
+                myReader.close();
+                if (lines == 8 * players) {
+                    return true;
                 }
-                
             }
             myReader.close();
 
