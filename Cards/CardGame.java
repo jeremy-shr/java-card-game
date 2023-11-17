@@ -3,16 +3,23 @@ import java.util.Scanner;
 public class CardGame {
     public static void main(String[] args) {
         Scanner userInput = new Scanner(System.in);
-        System.out.println("Please enter the number of players:");
-        int nbOfPlayers = userInput.nextInt();
-        userInput.close();
+        try{
+            System.out.println("Please enter the number of players:");
+            int nbOfPlayers = userInput.nextInt();
+            userInput.nextLine();
 
-        Scanner userInput2 = new Scanner(System.in);
-        System.out.println("Please enter location of pack to load:");
-        String packFileName = userInput2.nextLine();
-        userInput2.close();
+            System.out.println("Please enter location of pack to load:");
+            String packFileName = userInput.nextLine();
 
-        Pack gamePack = new Pack(nbOfPlayers, packFileName);
-        gamePack.distributeCards();
+            Pack gamePack = new Pack(nbOfPlayers, packFileName);
+            gamePack.readPack(packFileName);
+            System.out.println(gamePack.getPackCards());
+            gamePack.distributeCards();
+            
+        } catch (Exception e) {
+            System.out.println("An error occurred: " + e.getMessage());
+        } finally {
+            userInput.close();
+        }
     }
 }
