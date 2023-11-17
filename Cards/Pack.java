@@ -1,9 +1,13 @@
 import java.util.Scanner;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 
 public class Pack {
     private int nbOfPlayers;
@@ -13,37 +17,7 @@ public class Pack {
     public Pack(int n, String location) {
         this.nbOfPlayers = n;
         this.packFileName = location;
-
-        File myFile = new File(location);
-        boolean valid = this.validPack(n, location);
-        if (!valid) {
-            throw new Error("Pack is not valid");
-        }
-        Queue<Card> packCards = new LinkedList<>();
-
-        try {
-            Scanner myReader = new Scanner(myFile);
-            if (myFile.exists()) {
-                String line;
-                while ((line = myReader.nextLine()) != null) {
-                    packCards.add(new Card(line));
-                }
-                myReader.close();
-                this.packCards = packCards;
-            }
-        } catch (IOException e) {
-            System.out.println("Error reading the file");
-        }
-    }
-
-    public void distributeCards() {
-        int n = this.nbOfPlayers;
-        while ((this.packCards.size() > 4 * n)) {
-            Card pickedCard = packCards.poll();
-            // TODO: Give picked card to each player in round-robin fashion until each has
-            // 4.
-        }
-        // TODO: Split remaining cards into 4 seperate decks.
+        this.packCards = new LinkedList<>();
     }
 
     public int getNumberOfPlayers() {
@@ -62,9 +36,9 @@ public class Pack {
         File myFile = new File(fileName);
         int lines = 0;
         try {
-            Scanner myReader = new Scanner(myFile);
+            BufferedReader myReader = new BufferedReader(new FileReader(fileName));
             if (myFile.exists()) {
-                while (myReader.hasNextLine()) {
+                while (myReader.readLine() != null) {
                     lines++;
                 }
                 myReader.close();
@@ -72,11 +46,60 @@ public class Pack {
                     return true;
                 }
             }
-            myReader.close();
-
         } catch (FileNotFoundException e) {
             System.out.println("File has not been found at given location");
+        }catch (IOException e){
+            System.out.println("File has an error regagding IO ");
         }
         return false;
     }
+
+    public void readPack(String fileName){
+        File myFile = new File(fileName);
+        boolean valid = this.validPack(getNumberOfPlayers(), getPackFileName());
+        if (!valid) {
+            throw new Error("Pack is not valid");
+        }
+        try {
+            if (myFile.exists()) {
+                Scanner myReader = new Scanner(myFile);
+                while (myReader.hasNextLine()) {
+                    String line = myReader.nextLine();
+                    packCards.add(new Card(line));
+                }
+                myReader.close();
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Error reading the file");
+        }
+    }
+
+    public void distributeCards() {
+        int n = this.nbOfPlayers;
+        // Create a list to store references to the players
+        List<Player> players = new ArrayList<>();
+        List<Deck> decks = new ArrayList<>();
+        for (int i = 1; i <= n; i++){
+            Player player = new Player(i);
+            Deck deck = new Deck(i);
+            players.add(player);
+            decks.add(deck);
+        }
+        int playerIndex = 0;
+        int deckIndex = 0;
+
+        while (packCards.size() > (8*n) / 2) {
+            Card pickedCard = packCards.poll();
+            players.get(playerIndex).addToHand(pickedCard);
+            playerIndex = (playerIndex + 1) % n;
+        }
+    
+        while (packCards.size() > 0){
+            Card pickedCard = packCards.poll();
+            decks.get(playerIndex).addToDeck(pickedCard);
+            deckIndex = (deckIndex + 1) % n;
+        }
+    }
+
+
 }
