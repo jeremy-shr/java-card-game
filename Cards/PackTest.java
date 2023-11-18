@@ -28,15 +28,15 @@ public class PackTest {
     @Test
     public void testGetPackFileName() {
         String result = testPack.getPackFileName();
-        assertEquals(result, "four.txt");
+        assertEquals("four.txt", result);
     }
 
     @Test
     public void testReadPack() {
         testPack.readPack(testPack.getPackFileName());
         Queue<Card> testPackCards = testPack.getPackCards();
-        assertEquals(testPackCards.poll().getFaceValue(), 14);
-        assertEquals(testPackCards.poll().getFaceValue(), 2);
+        assertEquals(14, testPackCards.poll().getFaceValue());
+        assertEquals(2, testPackCards.poll().getFaceValue());
     }
 
     @Test
@@ -53,5 +53,20 @@ public class PackTest {
         // TODO: Test for non-number values
     }
 
-    // TODO: Test distribute cards
+    public void testDistributePack() {
+        testPack.distributeCards();
+        int n = testPack.getNumberOfPlayers();
+
+        // Tests for Player generation
+        assertEquals(4, Player.getAllPlayers().size());
+        for (int i = 1; i <= n; i++) {
+            assertEquals(i, Player.getAllPlayers().get(i - 1).getPlayerNum());
+        }
+
+        // Tests for Deck generation
+        assertEquals(4, Deck.getAllDecks().size());
+        for (int i = 1; i <= n; i++) {
+            assertEquals(i, Deck.getAllDecks().get(i - 1).getDeckNum());
+        }
+    }
 }

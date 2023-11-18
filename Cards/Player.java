@@ -24,8 +24,7 @@ public class Player {
         playerHand.offer(card);
     }
 
-    public ArrayList<Player> getAllPlayers() {
+    public static ArrayList<Player> getAllPlayers() {
         return allPlayers;
     }
-
 }

@@ -1,24 +1,32 @@
 import java.util.concurrent.*;
+import java.util.ArrayList;
 
-public class Deck{
+public class Deck {
 
     private int deckNum;
-    private ConcurrentLinkedQueue<Card> deckContent; 
+    private ConcurrentLinkedQueue<Card> deckContent;
+    private static ArrayList<Deck> allDecks;
 
-    public Deck(int number){
+    public Deck(int number) {
         this.deckNum = number;
         this.deckContent = new ConcurrentLinkedQueue<>();
+        allDecks.add(this);
     }
 
-    public int getDeckNum(){
-        return deckNum;
+    public int getDeckNum() {
+        return this.deckNum;
     }
 
-    public ConcurrentLinkedQueue<Card> getDeckContent(){
-        return deckContent;
+    public ConcurrentLinkedQueue<Card> getDeckContent() {
+        return this.deckContent;
     }
 
-    public void addToDeck(Card card){
+    public void addToDeck(Card card) {
         deckContent.offer(card);
     }
+
+    public static ArrayList<Deck> getAllDecks() {
+        return allDecks;
+    }
+
 }
