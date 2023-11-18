@@ -88,7 +88,7 @@ public class Pack {
         int playerIndex = 0;
         int deckIndex = 0;
 
-        while (packCards.size() > (8 * n) / 2) {
+        while (packCards.size() > 4 * n) {
             Card pickedCard = packCards.poll();
             players.get(playerIndex).addToHand(pickedCard);
             playerIndex = (playerIndex + 1) % n;
@@ -100,5 +100,4 @@ public class Pack {
             deckIndex = (deckIndex + 1) % n;
         }
     }
-
 }
