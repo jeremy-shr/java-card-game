@@ -1,20 +1,52 @@
 import java.util.Scanner;
 
 public class CardGame {
+
+    static boolean checkInt(String s){
+        try{ 
+            int i = Integer.parseInt(s);
+            if (i <= 0){
+                return false;
+            } 
+            return true; 
+        }catch(NumberFormatException er){ 
+            return false; 
+        }
+    }
     public static void main(String[] args) {
         Scanner userInput = new Scanner(System.in);
         try {
             System.out.println("Please enter the number of players:");
-            int nbOfPlayers = userInput.nextInt();
-            userInput.nextLine();
+            String nbOfPlayer = userInput.nextLine();
+            
+
+            while(!checkInt(nbOfPlayer)){
+                System.out.println("The number of players is not valid");
+                System.out.println("Please enter the number of players:");
+                nbOfPlayer = userInput.nextLine();
+            }
+            int nbOfPlayers = Integer.parseInt(nbOfPlayer);
 
             System.out.println("Please enter location of pack to load:");
             String packFileName = userInput.nextLine();
+            boolean validate = Pack.validPack(nbOfPlayers,packFileName);
+
+            
+            while (!validate){
+                System.out.println("The file is not valid");
+                System.out.println("Please enter location of pack to load:");
+                packFileName = userInput.nextLine();
+                validate = Pack.validPack(nbOfPlayers,packFileName);
+            }
 
             Pack gamePack = new Pack(nbOfPlayers, packFileName);
             gamePack.readPack(packFileName);
-            System.out.println(gamePack.getPackCards());
             gamePack.distributeCards();
+
+            for ( int i = 1; i < Player.getAllPlayers().size();i++){
+                Player.getAllPlayers().get(i).startThread();
+            }
+
 
         } catch (Exception e) {
             System.out.println("An error occurred: " + e.getMessage());
