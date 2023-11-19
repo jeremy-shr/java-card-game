@@ -5,7 +5,7 @@ public class Deck {
 
     private int deckNum;
     private ConcurrentLinkedQueue<Card> deckContent;
-    private static ArrayList<Deck> allDecks;
+    private static ArrayList<Deck> allDecks = new ArrayList<>();
 
     public Deck(int number) {
         this.deckNum = number;
@@ -28,5 +28,6 @@ public class Deck {
     public static ArrayList<Deck> getAllDecks() {
         return allDecks;
     }
+
 
 }
