@@ -1,15 +1,19 @@
 import java.util.concurrent.*;
 import java.util.ArrayList;
 
-public class Player {
+public class Player implements Runnable{
     private int playerNum;
     private ConcurrentLinkedQueue<Card> playerHand;
-    private static ArrayList<Player> allPlayers;
+    private static ArrayList<Player> allPlayers = new ArrayList<>();
 
     public Player(int number) {
         this.playerNum = number;
         this.playerHand = new ConcurrentLinkedQueue<>();
         allPlayers.add(this);
+    }
+
+    public void run(){
+        //TODO 
     }
 
     public int getPlayerNum() {
@@ -26,5 +30,10 @@ public class Player {
 
     public static ArrayList<Player> getAllPlayers() {
         return allPlayers;
+    }
+
+    public void startThread(){
+        Thread thread = new Thread(this);
+        thread.start();  
     }
 }
