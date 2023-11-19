@@ -32,7 +32,7 @@ public class Pack {
         return this.packCards;
     }
 
-    public Boolean validPack(int players, String fileName) {
+    public static Boolean validPack(int players, String fileName) {
         File myFile = new File(fileName);
         int lines = 0;
         try {
@@ -56,10 +56,6 @@ public class Pack {
 
     public void readPack(String fileName) {
         File myFile = new File(fileName);
-        boolean valid = this.validPack(getNumberOfPlayers(), getPackFileName());
-        if (!valid) {
-            throw new Error("Pack is not valid");
-        }
         try {
             if (myFile.exists()) {
                 Scanner myReader = new Scanner(myFile);
@@ -99,5 +95,6 @@ public class Pack {
             decks.get(playerIndex).addToDeck(pickedCard);
             deckIndex = (deckIndex + 1) % n;
         }
+        
     }
 }
