@@ -3,25 +3,25 @@ import java.util.Scanner;
 
 public class CardGame {
 
-    static boolean checkInt(String s){
-        try{ 
+    static boolean checkInt(String s) {
+        try {
             int i = Integer.parseInt(s);
-            if (i <= 0){
+            if (i <= 0) {
                 return false;
-            } 
-            return true; 
-        }catch(NumberFormatException er){ 
-            return false; 
+            }
+            return true;
+        } catch (NumberFormatException er) {
+            return false;
         }
     }
+
     public static void main(String[] args) {
         Scanner userInput = new Scanner(System.in);
         try {
             System.out.println("Please enter the number of players:");
             String nbOfPlayer = userInput.nextLine();
-            
 
-            while(!checkInt(nbOfPlayer)){
+            while (!checkInt(nbOfPlayer)) {
                 System.out.println("The number of players is not valid");
                 System.out.println("Please enter the number of players:");
                 nbOfPlayer = userInput.nextLine();
@@ -30,44 +30,39 @@ public class CardGame {
 
             System.out.println("Please enter location of pack to load:");
             String packFileName = userInput.nextLine();
-            boolean validate = Pack.validPack(nbOfPlayers,packFileName);
+            boolean validate = Pack.validPack(nbOfPlayers, packFileName);
 
-            
-            while (!validate){
+            while (!validate) {
                 System.out.println("The file is not valid");
                 System.out.println("Please enter location of pack to load:");
                 packFileName = userInput.nextLine();
-                validate = Pack.validPack(nbOfPlayers,packFileName);
+                validate = Pack.validPack(nbOfPlayers, packFileName);
             }
 
             Pack gamePack = new Pack(nbOfPlayers, packFileName);
             gamePack.readPack(packFileName);
             gamePack.distributeCards();
-            for ( int i = 0; i < Player.getAllPlayers().size();i++){
+            for (int i = 0; i < nbOfPlayers; i++) {
                 Player.getAllPlayers().get(i).startThread();
                 Player.getAllPlayers().get(i).createOutputFile();
-                //while (!Player.getAllPlayers().get(i).winner()){
+                // while (!Player.getAllPlayers().get(i).winner()){
 
-                //}
-                
+                // }
+
             }
 
-           
-
-            /* 
-            //PRINT PLAYERS HANDS 
-            for (int j = 0; j < Player.getAllPlayers().size();j++){
-                ConcurrentLinkedQueue<Card> ph = Player.getAllPlayers().get(j).getPlayerHand();
-                System.out.println("---p"+(j+1)+"---");
-                while (!ph.isEmpty()){
-                    Card hand1 = ph.poll();
-                    System.out.println(hand1.getFaceValue());
-                }
-            }
-            */
-            
-            
-
+            /*
+             * //PRINT PLAYERS HANDS
+             * for (int j = 0; j < Player.getAllPlayers().size();j++){
+             * ConcurrentLinkedQueue<Card> ph =
+             * Player.getAllPlayers().get(j).getPlayerHand();
+             * System.out.println("---p"+(j+1)+"---");
+             * while (!ph.isEmpty()){
+             * Card hand1 = ph.poll();
+             * System.out.println(hand1.getFaceValue());
+             * }
+             * }
+             */
 
         } catch (Exception e) {
             System.out.println("An error occurred: " + e.getMessage());

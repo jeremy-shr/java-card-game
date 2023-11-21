@@ -47,9 +47,9 @@ public class PackTest {
     @Test
     public void testNotValidPack() {
         Pack emptyPack = new Pack(4, "nullPack.txt");
-        assertTrue(!emptyPack.validPack(emptyPack.getNumberOfPlayers(), emptyPack.getPackFileName()));
+        assertTrue(!Pack.validPack(emptyPack.getNumberOfPlayers(), emptyPack.getPackFileName()));
         Pack tooLargePack = new Pack(4, "tooLargePack.txt");
-        assertTrue(!tooLargePack.validPack(tooLargePack.getNumberOfPlayers(), tooLargePack.getPackFileName()));
+        assertTrue(!Pack.validPack(tooLargePack.getNumberOfPlayers(), tooLargePack.getPackFileName()));
         // TODO: Test for non-number values
     }
 

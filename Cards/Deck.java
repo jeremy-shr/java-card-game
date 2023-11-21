@@ -25,9 +25,12 @@ public class Deck {
         deckContent.offer(card);
     }
 
+    public Card drawCard() {
+        return deckContent.poll();
+    }
+
     public static ArrayList<Deck> getAllDecks() {
         return allDecks;
     }
-
 
 }
