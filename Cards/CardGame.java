@@ -1,5 +1,5 @@
 import java.util.Scanner;
-//import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class CardGame {
 
@@ -42,14 +42,28 @@ public class CardGame {
             Pack gamePack = new Pack(nbOfPlayers, packFileName);
             gamePack.readPack(packFileName);
             gamePack.distributeCards();
+
             for (int i = 0; i < nbOfPlayers; i++) {
                 Player.getAllPlayers().get(i).startThread();
                 Player.getAllPlayers().get(i).createOutputFile();
                 // while (!Player.getAllPlayers().get(i).winner()){
 
                 // }
-
             }
+            
+            
+            /* 
+            //PRINT DECKS CONTENT
+            for (int k = 0; k < Deck.getAllDecks().size();k++){
+               ConcurrentLinkedQueue<Card> pd = Deck.getAllDecks().get(k).getDeckContent();
+               System.out.println("---p"+(k+1)+"---");
+               while (!pd.isEmpty()) {
+                Card deckCard = pd.poll();
+                System.out.println(deckCard.getFaceValue());
+               }
+            }
+            */
+
 
             /*
              * //PRINT PLAYERS HANDS
