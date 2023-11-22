@@ -1,5 +1,6 @@
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -89,10 +90,13 @@ public class Pack {
             players.get(playerIndex).addToHand(pickedCard, 0);
             playerIndex = (playerIndex + 1) % n;
         }
-
+        for (int j = 0; j < players.size();j++){
+            Collections.reverse(players.get(j).getPlayerHand());
+        }
+        
         while (packCards.size() > 0) {
             Card pickedCard = packCards.poll();
-            decks.get(playerIndex).addToDeck(pickedCard);
+            decks.get(deckIndex).addToDeck(pickedCard);
             deckIndex = (deckIndex + 1) % n;
         }
 
