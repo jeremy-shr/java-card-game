@@ -1,17 +1,21 @@
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class Player implements Runnable {
+    private String pathName;
     private int playerNum;
     private ArrayList<Card> playerHand;
     private Deck drawDeck;
     private Deck discardDeck;
     private static ArrayList<Player> allPlayers = new ArrayList<>();
     private Thread thread;
-    private volatile boolean stopFlag = false;
+    private static volatile boolean stopFlag = false;
     private static ArrayList<Thread> allThreads = new ArrayList<>();
+    private volatile static int winnerNum;
 
     public Player(int number) {
         this.playerNum = number;
@@ -20,8 +24,14 @@ public class Player implements Runnable {
     }
 
     public void run() {
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         int lPointer = 0;
-    
+
         // Defining the player's discard and draw decks
         int numOfPlayers = Deck.getAllDecks().size();
         drawDeck = Deck.getAllDecks().get(getPlayerNum() - 1);
@@ -30,44 +40,85 @@ public class Player implements Runnable {
         } else {
             discardDeck = Deck.getAllDecks().get(playerNum);
         }
-    
-        while (!stopFlag && !Thread.currentThread().isInterrupted() && !this.winner()) {
+        System.out.println("Draw deck for Player " + playerNum + " is of size " + drawDeck.getDeckContent().size());
+
+        while (!this.winner() && !stopFlag) {
+            if (lPointer == 4) {
+                lPointer = 0;
+            }
             String newCard = getPlayerHand().get(lPointer).getFaceValue();
             if (newCard.equals(Integer.toString(this.playerNum))) {
                 lPointer++;
-            } else {
+            } else if (drawDeck.getDeckContent().size() != 0) {
                 replaceCard(lPointer);
+                lPointer++;
             }
         }
-
-        // Handle interruption after the loop
-        if (Thread.currentThread().isInterrupted()) {
-            stopThread();
+        stopAllThreads();
+        Player.stopFlag = true;
+        Boolean isWinner = this.winner();
+        if (isWinner) {
+            Player.winnerNum = playerNum;
+        }
+        FileWriter myWriter;
+        try {
+            myWriter = new FileWriter(this.pathName, true);
+            if (isWinner) {
+                myWriter.write("player " + playerNum + " wins\n");
+                myWriter.write("player " + playerNum + " exits\n");
+                myWriter.write("player " + playerNum + " final hand: " + playerHand.get(0).getFaceValue() + " "
+                        + playerHand.get(1).getFaceValue()
+                        + " " + playerHand.get(2).getFaceValue() + " " + playerHand.get(3).getFaceValue());
+                System.out.println("player " + playerNum + " wins");
+            } else {
+                myWriter.write("player " + winnerNum + " has informed player " + playerNum + " that player " + winnerNum
+                        + " has won\n");
+                myWriter.write("player " + playerNum + " exits\n");
+                myWriter.write("player " + playerNum + " hand: " + playerHand.get(0).getFaceValue() + " "
+                        + playerHand.get(1).getFaceValue()
+                        + " " + playerHand.get(2).getFaceValue() + " " + playerHand.get(3).getFaceValue());
+            }
+            myWriter.close();
+        } catch (IOException e) {
+            System.out.println("Encountered an IO error");
         }
     }
-    
 
     public synchronized void replaceCard(int index) {
-        discardDeck.addToDeck(playerHand.get(index));
+        Card discardedCard = playerHand.get(index);
+        discardDeck.addToDeck(discardedCard);
+        System.out.println(playerNum + "Has discarded a card to deck " + discardDeck.getDeckNum());
         playerHand.remove(index);
-        addToHand(drawDeck.drawCard(), index);
-        System.out.println("cards have been replaced for "+playerNum);
-       
-        try {
-            if (discardDeck.getDeckContent().size() == 4 && drawDeck.getDeckContent().size() == 4) {
-                for (Player player : Player.getAllPlayers()) {
-                    synchronized (player) {
-                        player.notifyAll();
-                    }
-                }
-            }
-            while(!stopFlag ){
-                System.out.println(thread.getName()+" is now waiting");
-                wait(); 
-            }
-        }catch (InterruptedException e){
-        System.out.println("The thread "+getPlayerNum()+" has been interupted");
-        }
+        Card drawnCard = drawDeck.drawCard();
+        addToHand(drawnCard, index);
+        System.out.println(playerNum + "Has picked a card from deck " + drawDeck.getDeckNum());
+        String line1 = "player " + playerNum + " draws a " + drawnCard.getFaceValue() + " from deck " + playerNum;
+        String line2 = "player " + playerNum + " discards a " + discardedCard.getFaceValue() + " to deck "
+                + discardDeck.getDeckNum();
+        String line3 = "player " + playerNum + " current hand is " + playerHand.get(0).getFaceValue() + " "
+                + playerHand.get(1).getFaceValue()
+                + " " + playerHand.get(2).getFaceValue() + " " + playerHand.get(3).getFaceValue();
+        writeToFile(line1, line2, line3, playerNum);
+
+        System.out.println(
+                "Current Draw deck " + drawDeck.getDeckNum() + " is now of length" + drawDeck.getDeckContent().size());
+
+        // try {
+        // if (discardDeck.getDeckContent().size() == 4 &&
+        // drawDeck.getDeckContent().size() == 4) {
+        // for (Player player : Player.getAllPlayers()) {
+        // synchronized (player) {
+        // player.notifyAll();
+        // }
+        // }
+        // }
+        // while (!stopFlag) {
+        // System.out.println(thread.getName() + " is now waiting");
+        // wait();
+        // }
+        // } catch (InterruptedException e) {
+        // System.out.println("The thread " + getPlayerNum() + " has been interupted");
+        // }
     }
 
     public int getPlayerNum() {
@@ -94,18 +145,17 @@ public class Player implements Runnable {
         thread = new Thread(this);
         allThreads.add(thread);
         thread.start();
+        System.out.println("Thread Created");
     }
 
-    public void stopThread(){
-        stopFlag = true;
+    public void stopThread() {
         thread.interrupt();
     }
 
-    public static void stopAllThreads(){
-        for (Player player : getAllPlayers()){
+    public static void stopAllThreads() {
+        for (Player player : getAllPlayers()) {
             player.stopThread();
         }
-        
     }
 
     public Boolean winner() {
@@ -123,16 +173,30 @@ public class Player implements Runnable {
     }
 
     public void createOutputFile() {
-        String pathName = "player" + getPlayerNum() + "_output.txt";
+        this.pathName = "player" + getPlayerNum() + "_output.txt";
         try {
             File myFile = new File(pathName);
             myFile.createNewFile();
             FileWriter myWriter = new FileWriter(pathName);
-            myWriter.write("player " + getPlayerNum() + " initial hand " + playerHand.get(0).getFaceValue() + " " + playerHand.get(1).getFaceValue()
-                    + " " + playerHand.get(2).getFaceValue() + " " + playerHand.get(3).getFaceValue());
+            myWriter.write("player " + getPlayerNum() + " initial hand " + playerHand.get(0).getFaceValue() + " "
+                    + playerHand.get(1).getFaceValue()
+                    + " " + playerHand.get(2).getFaceValue() + " " + playerHand.get(3).getFaceValue() + "\n");
             myWriter.close();
         } catch (IOException e) {
-            System.out.println("File has an error regarding IO ");
+            System.out.println("Encountered an IO error");
+        }
+    }
+
+    public void writeToFile(String message, String message2, String message3, int playerNum) {
+        FileWriter myWriter;
+        try {
+            myWriter = new FileWriter(this.pathName, true);
+            myWriter.write(message + "\n");
+            myWriter.write(message2 + "\n");
+            myWriter.write(message3 + "\n");
+            myWriter.close();
+        } catch (IOException e) {
+            System.out.println("Encountered an IO error");
         }
     }
 }
