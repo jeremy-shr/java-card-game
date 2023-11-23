@@ -9,6 +9,9 @@ public class Player implements Runnable {
     private Deck drawDeck;
     private Deck discardDeck;
     private static ArrayList<Player> allPlayers = new ArrayList<>();
+    private Thread thread;
+    private volatile boolean stopFlag = false;
+    private static ArrayList<Thread> allThreads = new ArrayList<>();
 
     public Player(int number) {
         this.playerNum = number;
@@ -18,40 +21,53 @@ public class Player implements Runnable {
 
     public void run() {
         int lPointer = 0;
-
+    
         // Defining the player's discard and draw decks
         int numOfPlayers = Deck.getAllDecks().size();
         drawDeck = Deck.getAllDecks().get(getPlayerNum() - 1);
         if (playerNum == numOfPlayers) {
             discardDeck = Deck.getAllDecks().get(0);
-            System.out.println(discardDeck);
         } else {
             discardDeck = Deck.getAllDecks().get(playerNum);
         }
-
-        while (!this.winner()) {
+    
+        while (!stopFlag && !Thread.currentThread().isInterrupted() && !this.winner()) {
             String newCard = getPlayerHand().get(lPointer).getFaceValue();
-            if (newCard.equals(Integer.toString(this.playerNum)) ) {
+            if (newCard.equals(Integer.toString(this.playerNum))) {
                 lPointer++;
             } else {
                 replaceCard(lPointer);
             }
         }
-        // Declare winner and break
+
+        // Handle interruption after the loop
+        if (Thread.currentThread().isInterrupted()) {
+            stopThread();
+        }
     }
+    
 
     public synchronized void replaceCard(int index) {
-        while (discardDeck.getDeckContent().size() > 4) {
-           try {
-            wait();
-
-           }catch (InterruptedException e){
-            System.out.println("The thread has been interupted");
-           } 
-        }
         discardDeck.addToDeck(playerHand.get(index));
         playerHand.remove(index);
         addToHand(drawDeck.drawCard(), index);
+        System.out.println("cards have been replaced for "+playerNum);
+       
+        try {
+            if (discardDeck.getDeckContent().size() == 4 && drawDeck.getDeckContent().size() == 4) {
+                for (Player player : Player.getAllPlayers()) {
+                    synchronized (player) {
+                        player.notifyAll();
+                    }
+                }
+            }
+            while(!stopFlag ){
+                System.out.println(thread.getName()+" is now waiting");
+                wait(); 
+            }
+        }catch (InterruptedException e){
+        System.out.println("The thread "+getPlayerNum()+" has been interupted");
+        }
     }
 
     public int getPlayerNum() {
@@ -70,9 +86,26 @@ public class Player implements Runnable {
         return allPlayers;
     }
 
+    public static ArrayList<Thread> getAllThreads() {
+        return allThreads;
+    }
+
     public void startThread() {
-        Thread thread = new Thread(this);
+        thread = new Thread(this);
+        allThreads.add(thread);
         thread.start();
+    }
+
+    public void stopThread(){
+        stopFlag = true;
+        thread.interrupt();
+    }
+
+    public static void stopAllThreads(){
+        for (Player player : getAllPlayers()){
+            player.stopThread();
+        }
+        
     }
 
     public Boolean winner() {
@@ -85,7 +118,7 @@ public class Player implements Runnable {
                 return false;
             }
         }
-        System.out.println("player "+getPlayerNum()+" wins");
+        stopAllThreads();
         return true;
     }
 
