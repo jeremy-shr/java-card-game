@@ -44,11 +44,12 @@ public class CardGame {
             gamePack.distributeCards();
 
             for (int i = 0; i < nbOfPlayers; i++) {
-                Player.getAllPlayers().get(i).startThread();
                 Player.getAllPlayers().get(i).createOutputFile();
-                // while (!Player.getAllPlayers().get(i).winner()){
-
-                // }
+                Player.getAllPlayers().get(i).startThread();
+                if (Player.getAllPlayers().get(i).winner()){
+                    System.out.println("player "+ Player.getAllPlayers().get(i).getPlayerNum() +" wins");
+                    Player.stopAllThreads();
+                }
             }
             
             
