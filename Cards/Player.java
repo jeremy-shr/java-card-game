@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Player implements Runnable {
     private String pathName;
+    private String deckPathName;
     private int playerNum;
     private ArrayList<Card> playerHand;
     private Deck drawDeck;
@@ -55,6 +56,7 @@ public class Player implements Runnable {
             }
         }
         stopAllThreads();
+        //writeToDeck();
         Player.stopFlag = true;
         Boolean isWinner = this.winner();
         if (isWinner) {
@@ -196,6 +198,21 @@ public class Player implements Runnable {
             myWriter.write(message3 + "\n");
             myWriter.close();
         } catch (IOException e) {
+            System.out.println("Encountered an IO error");
+        }
+    }
+
+    public void writeToDeck(){
+        this.deckPathName = "deck" + getPlayerNum() + "_output.txt";
+        try {
+            File myFile = new File(deckPathName);
+            myFile.createNewFile();
+            FileWriter myWriter = new FileWriter(deckPathName);
+            myWriter.write("deck"+playerNum+" contents: "+this.drawDeck.getDeckContent().poll().getFaceValue()
+            +" "+this.drawDeck.getDeckContent().poll().getFaceValue()+" "+this.drawDeck.getDeckContent().poll().getFaceValue()
+            +" "+this.drawDeck.getDeckContent().poll().getFaceValue());
+            myWriter.close();
+        }catch (IOException e){
             System.out.println("Encountered an IO error");
         }
     }
