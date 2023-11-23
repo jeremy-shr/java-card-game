@@ -46,25 +46,24 @@ public class CardGame {
             for (int i = 0; i < nbOfPlayers; i++) {
                 Player.getAllPlayers().get(i).createOutputFile();
                 Player.getAllPlayers().get(i).startThread();
-                if (Player.getAllPlayers().get(i).winner()){
-                    System.out.println("player "+ Player.getAllPlayers().get(i).getPlayerNum() +" wins");
-                    Player.stopAllThreads();
-                }
+                // if (Player.getAllPlayers().get(i).winner()) {
+                // System.out.println("player " + Player.getAllPlayers().get(i).getPlayerNum() +
+                // " wins");
+                // Player.stopAllThreads();
+                // }
             }
-            
-            
-            /* 
-            //PRINT DECKS CONTENT
-            for (int k = 0; k < Deck.getAllDecks().size();k++){
-               ConcurrentLinkedQueue<Card> pd = Deck.getAllDecks().get(k).getDeckContent();
-               System.out.println("---p"+(k+1)+"---");
-               while (!pd.isEmpty()) {
-                Card deckCard = pd.poll();
-                System.out.println(deckCard.getFaceValue());
-               }
-            }
-            */
 
+            /*
+             * //PRINT DECKS CONTENT
+             * for (int k = 0; k < Deck.getAllDecks().size();k++){
+             * ConcurrentLinkedQueue<Card> pd = Deck.getAllDecks().get(k).getDeckContent();
+             * System.out.println("---p"+(k+1)+"---");
+             * while (!pd.isEmpty()) {
+             * Card deckCard = pd.poll();
+             * System.out.println(deckCard.getFaceValue());
+             * }
+             * }
+             */
 
             /*
              * //PRINT PLAYERS HANDS
