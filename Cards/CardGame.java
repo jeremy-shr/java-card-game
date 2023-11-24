@@ -46,11 +46,6 @@ public class CardGame {
             for (int i = 0; i < nbOfPlayers; i++) {
                 Player.getAllPlayers().get(i).createOutputFile();
                 Player.getAllPlayers().get(i).startThread();
-                // if (Player.getAllPlayers().get(i).winner()) {
-                // System.out.println("player " + Player.getAllPlayers().get(i).getPlayerNum() +
-                // " wins");
-                // Player.stopAllThreads();
-                // }
             }
 
             /*
