@@ -1,5 +1,4 @@
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -26,11 +25,16 @@ public class Player implements Runnable {
 
     public void run() {
         try {
+            TimeUnit.MILLISECONDS.sleep(50);
+        } catch (InterruptedException e) {   
+        }
+        winner();
+        try {
             TimeUnit.SECONDS.sleep(1);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            //e.printStackTrace();
         }
+
         int lPointer = 0;
 
         // Defining the player's discard and draw decks
@@ -56,8 +60,6 @@ public class Player implements Runnable {
             }
         }
         stopAllThreads();
-        //writeToDeck();
-        Player.stopFlag = true;
         Boolean isWinner = this.winner();
         if (isWinner) {
             Player.winnerNum = playerNum;
@@ -68,22 +70,20 @@ public class Player implements Runnable {
             if (isWinner) {
                 myWriter.write("player " + playerNum + " wins\n");
                 myWriter.write("player " + playerNum + " exits\n");
-                myWriter.write("player " + playerNum + " final hand: " + playerHand.get(0).getFaceValue() + " "
-                        + playerHand.get(1).getFaceValue()
-                        + " " + playerHand.get(2).getFaceValue() + " " + playerHand.get(3).getFaceValue());
+                myWriter.write("player " + playerNum + " final hand:" + presentHand());
                 System.out.println("player " + playerNum + " wins");
             } else {
                 myWriter.write("player " + winnerNum + " has informed player " + playerNum + " that player " + winnerNum
                         + " has won\n");
                 myWriter.write("player " + playerNum + " exits\n");
-                myWriter.write("player " + playerNum + " hand: " + playerHand.get(0).getFaceValue() + " "
-                        + playerHand.get(1).getFaceValue()
-                        + " " + playerHand.get(2).getFaceValue() + " " + playerHand.get(3).getFaceValue());
+                myWriter.write("player " + playerNum + " hand:" + presentHand());
             }
             myWriter.close();
         } catch (IOException e) {
             System.out.println("Encountered an IO error");
         }
+        writeToDeck();
+
     }
 
     public synchronized void replaceCard(int index) {
@@ -97,9 +97,7 @@ public class Player implements Runnable {
         String line1 = "player " + playerNum + " draws a " + drawnCard.getFaceValue() + " from deck " + playerNum;
         String line2 = "player " + playerNum + " discards a " + discardedCard.getFaceValue() + " to deck "
                 + discardDeck.getDeckNum();
-        String line3 = "player " + playerNum + " current hand is " + playerHand.get(0).getFaceValue() + " "
-                + playerHand.get(1).getFaceValue()
-                + " " + playerHand.get(2).getFaceValue() + " " + playerHand.get(3).getFaceValue();
+        String line3 = "player " + playerNum + " current hand is" + presentHand();
         writeToFile(line1, line2, line3, playerNum);
 
         System.out.println(
@@ -143,6 +141,7 @@ public class Player implements Runnable {
         return allThreads;
     }
 
+
     public void startThread() {
         thread = new Thread(this);
         allThreads.add(thread);
@@ -170,6 +169,7 @@ public class Player implements Runnable {
                 return false;
             }
         }
+        Player.stopFlag = true;
         stopAllThreads();
         return true;
     }
@@ -180,9 +180,7 @@ public class Player implements Runnable {
             File myFile = new File(pathName);
             myFile.createNewFile();
             FileWriter myWriter = new FileWriter(pathName);
-            myWriter.write("player " + getPlayerNum() + " initial hand " + playerHand.get(0).getFaceValue() + " "
-                    + playerHand.get(1).getFaceValue()
-                    + " " + playerHand.get(2).getFaceValue() + " " + playerHand.get(3).getFaceValue() + "\n");
+            myWriter.write("player " + getPlayerNum() + " initial hand" + presentHand()+ "\n");
             myWriter.close();
         } catch (IOException e) {
             System.out.println("Encountered an IO error");
@@ -208,12 +206,22 @@ public class Player implements Runnable {
             File myFile = new File(deckPathName);
             myFile.createNewFile();
             FileWriter myWriter = new FileWriter(deckPathName);
-            myWriter.write("deck"+playerNum+" contents: "+this.drawDeck.getDeckContent().poll().getFaceValue()
-            +" "+this.drawDeck.getDeckContent().poll().getFaceValue()+" "+this.drawDeck.getDeckContent().poll().getFaceValue()
-            +" "+this.drawDeck.getDeckContent().poll().getFaceValue());
+            myWriter.write("deck"+playerNum+" contents: ");
+            while(!this.drawDeck.getDeckContent().isEmpty())
+                for( int i = 0; i < this.drawDeck.getDeckContent().size(); i++){
+                    myWriter.append(this.drawDeck.getDeckContent().poll().getFaceValue()+" ");
+                }
             myWriter.close();
         }catch (IOException e){
             System.out.println("Encountered an IO error");
         }
     }
+
+    public String presentHand() {
+        String hand = "";
+        for (int i = 0; i < playerHand.size(); i++) {
+            hand = hand + " "+playerHand.get(i).getFaceValue();
+        }
+        return hand;
+    };
 }
