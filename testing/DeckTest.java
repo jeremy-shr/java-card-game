@@ -55,13 +55,10 @@ public class DeckTest {
 
         // Drawing a card from the source deck
         Card drawnCard = sourceDeck.drawCard();
-
         // Adding the drawn card to the destination deck
         destinationDeck.addToDeck(drawnCard);
-
         // Checking the source deck content after drawing a card
         assertFalse(sourceDeck.getDeckContent().contains(drawnCard));
-
         // Checking the destination deck content after adding the drawn card
         assertTrue(destinationDeck.getDeckContent().contains(drawnCard));
     }
@@ -78,16 +75,12 @@ public class DeckTest {
 
         // Drawing a card from the source deck
         Card drawnCard = sourceDeck.drawCard();
-
         // Adding the drawn card to the destination deck
         destinationDeck.addToDeck(drawnCard);
-
         // Checking the source deck content after drawing a card
         assertFalse(sourceDeck.getDeckContent().contains(drawnCard));
-
         // Checking the destination deck content after adding the drawn card
         assertTrue(destinationDeck.getDeckContent().contains(drawnCard));
-
         // Checking if all decks are present in the static list of all decks
         assertTrue(Deck.getAllDecks().contains(sourceDeck));
         assertTrue(Deck.getAllDecks().contains(destinationDeck));
