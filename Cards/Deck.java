@@ -7,11 +7,24 @@ public class Deck {
     private ConcurrentLinkedQueue<Card> deckContent;
     private static ArrayList<Deck> allDecks = new ArrayList<>();
 
+    // Deck constructor
     public Deck(int number) {
         this.deckNum = number;
         this.deckContent = new ConcurrentLinkedQueue<>();
         allDecks.add(this);
     }
+
+    // Method adding a Card to the end of the Deck queue
+    public void addToDeck(Card card) {
+        deckContent.offer(card);
+    }
+
+    // Method that takes and returns the first card of the Deck (head)
+    public Card drawCard() {
+        return deckContent.poll();
+    }
+
+    // Get methods
 
     public int getDeckNum() {
         return this.deckNum;
@@ -19,14 +32,6 @@ public class Deck {
 
     public ConcurrentLinkedQueue<Card> getDeckContent() {
         return this.deckContent;
-    }
-
-    public void addToDeck(Card card) {
-        deckContent.offer(card);
-    }
-
-    public Card drawCard() {
-        return deckContent.poll();
     }
 
     public static ArrayList<Deck> getAllDecks() {
