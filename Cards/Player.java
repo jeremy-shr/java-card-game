@@ -211,7 +211,6 @@ public class Player implements Runnable {
     public void startThread() {
         thread = new Thread(this);
         thread.start();
-        System.out.println("Thread Created");
     }
 
     public void stopThread() {
