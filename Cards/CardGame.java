@@ -6,7 +6,7 @@ public class CardGame {
     static boolean checkInt(String s) {
         try {
             int i = Integer.parseInt(s);
-            if (i <= 0) {
+            if (i <= 1) {
                 return false;
             }
             return true;
