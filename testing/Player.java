@@ -12,7 +12,7 @@ public class Player implements Runnable {
     private Deck discardDeck;
     private static ArrayList<Player> allPlayers = new ArrayList<>();
     private Thread thread;
-    private static volatile boolean stopFlag = false;
+    public static volatile boolean stopFlag = false;
     private static volatile int winnerNum;
 
     // Player class constructor
