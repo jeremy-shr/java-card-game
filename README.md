@@ -11,3 +11,5 @@ multi-threaded card playing simulation
 -At the start of the game, each player will be distributed four cards in a round-robin fashion
 -one card to player1, then one card to player2,
 etc
+
+to run the tests : java -cp .\lib\junit-4.13.2.jar`;`.\lib\hamcrest-core-1.3.jar.`;`.`; TestRunner.java
