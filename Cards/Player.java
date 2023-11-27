@@ -6,7 +6,6 @@ import java.util.concurrent.TimeUnit;
 
 public class Player implements Runnable {
     private String pathName;
-    private String deckPathName;
     private int playerNum;
     private ArrayList<Card> playerHand;
     private Deck drawDeck;
@@ -63,7 +62,7 @@ public class Player implements Runnable {
         // Discard card
         Card discardedCard = playerHand.get(index);
         discardDeck.addToDeck(discardedCard);
-        playerHand.remove(index);
+        removeCard(index);
 
         // Draw card
         Card drawnCard = drawDeck.drawCard();
@@ -101,7 +100,6 @@ public class Player implements Runnable {
 
     // Define method to handle thread behaviour when a winner is found
     public void handleGameEnd() {
-        stopAllThreads();
         Boolean isWinner = this.winner();
         int num = this.playerNum;
         if (isWinner) {
@@ -127,7 +125,8 @@ public class Player implements Runnable {
         } catch (IOException e) {
             System.out.println("Encountered an IO error");
         }
-        writeToDeck();
+        String deckPathName = "deck" + getPlayerNum() + "_output.txt";
+        this.drawDeck.writeToDeck(deckPathName);
     }
 
     // Define method to load game prerequisites: every thread must be created and
@@ -179,24 +178,6 @@ public class Player implements Runnable {
         }
     }
 
-    // Define method used to write to deck output files
-    public void writeToDeck() {
-        this.deckPathName = "deck" + getPlayerNum() + "_output.txt";
-        try {
-            File myFile = new File(deckPathName);
-            myFile.createNewFile();
-            FileWriter myWriter = new FileWriter(deckPathName);
-            myWriter.write("deck" + playerNum + " contents: ");
-            while (!this.drawDeck.getDeckContent().isEmpty())
-                for (int i = 0; i < this.drawDeck.getDeckContent().size(); i++) {
-                    myWriter.append(this.drawDeck.getDeckContent().poll().getFaceValue() + " ");
-                }
-            myWriter.close();
-        } catch (IOException e) {
-            System.out.println("Encountered an IO error");
-        }
-    }
-
     // Define method to format Cards in hand into a String
     public String presentHand() {
         String hand = "";
@@ -205,6 +186,10 @@ public class Player implements Runnable {
         }
         return hand;
     };
+
+    public void removeCard(int index) {
+        playerHand.remove(index);
+    }
 
     // Thread management methods
 
