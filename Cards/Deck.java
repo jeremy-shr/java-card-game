@@ -1,5 +1,8 @@
 import java.util.concurrent.*;
+import java.io.File;
 import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class Deck {
 
@@ -14,14 +17,31 @@ public class Deck {
         allDecks.add(this);
     }
 
-    // Method adding a Card to the end of the Deck queue
+    // Define method adding a Card to the end of the Deck queue
     public void addToDeck(Card card) {
         deckContent.offer(card);
     }
 
-    // Method that takes and returns the first card of the Deck (head)
+    // Define method that takes and returns the first card of the Deck (head)
     public Card drawCard() {
         return deckContent.poll();
+    }
+
+    // Define method to write deck contents to a file with a given pathname
+    public void writeToDeck(String pathname) {
+        try {
+            File myFile = new File(pathname);
+            myFile.createNewFile();
+            FileWriter myWriter = new FileWriter(pathname);
+            myWriter.write("deck" + deckNum + " contents: ");
+            while (!this.getDeckContent().isEmpty())
+                for (int i = 0; i < this.getDeckContent().size(); i++) {
+                    myWriter.append(this.getDeckContent().poll().getFaceValue() + " ");
+                }
+            myWriter.close();
+        } catch (IOException e) {
+            System.out.println("Encountered an IO error");
+        }
     }
 
     // Get methods
