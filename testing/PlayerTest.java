@@ -16,19 +16,6 @@ public class PlayerTest {
         this.testPlayer = testPlayer;
     }
 
-    // TODO TEST NEEDS TO BE COMPLETED WITH THREADS RUNNING
-    // @Test
-    // public void testWinner() {
-    // Pack winningPack = new Pack(4, "winner.txt");
-    // winningPack.distributeCards();
-    // Player winningPlayer = Player.getAllPlayers().get(0);
-    // for (int i = 0; i < 4; i++) {
-    // Card card = new Card("2");
-    // testPlayer.addToHand(card, i);
-    // }
-    // assertTrue(testPlayer.winner());
-    // }
-
     @Test
     public void testPresentHand() {
         String sample = " 14 2 13 3";
@@ -77,5 +64,22 @@ public class PlayerTest {
             player.startThread();
         }
         assertTrue(Player.stopFlag);
+    }
+
+    // Test method to verify game has completed and closed
+    @Test
+    public void testGameCompletion() {
+        try {
+            for (int i = 0; i < Player.getAllPlayers().size(); i++) {
+                Player player = Player.getAllPlayers().get(i);
+                player.createOutputFile();
+                player.startThread();
+            }
+        } catch (Exception e) {
+            assertTrue(false);
+            System.out.println("Failure reached in game loop");
+        } finally {
+            assertTrue(Player.stopFlag);
+        }
     }
 }
