@@ -64,6 +64,9 @@ public class Pack {
 
     // Define method to create and distribute cards to new Players and Decks
     public void distributeCards() {
+        // Reset allPlayers and allDecks variables to start a blank game environment
+        Player.resetPlayers();
+        Deck.resetDecks();
         int n = this.nbOfPlayers;
         // Create a list to store references to the players
         List<Player> players = new ArrayList<>();
