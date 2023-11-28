@@ -221,4 +221,9 @@ public class Player implements Runnable {
     public static ArrayList<Player> getAllPlayers() {
         return allPlayers;
     }
+
+    // Define method to reset all players for new Pack distributions
+    public static void resetPlayers() {
+        allPlayers = new ArrayList<>();
+    }
 }
