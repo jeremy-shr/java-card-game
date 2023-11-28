@@ -1,1 +1,0 @@
-player 1 initial hand 14 2 13 3
