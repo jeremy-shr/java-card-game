@@ -19,7 +19,7 @@ public class DeckTest {
 
     @Test
     public void testAddToDeck() {
-        Card testCard = new Card("A"); 
+        Card testCard = new Card("9"); 
         // Adding a card to the deck
         testDeck.addToDeck(testCard);
         // Checking if the deck content contains the added card
@@ -50,7 +50,7 @@ public class DeckTest {
     @Test
     public void testDrawCardAndAddToAnotherDeck() {
         // Adding cards to the source deck
-        Card card1 = new Card("A");
+        Card card1 = new Card("9");
         Card card2 = new Card("2");
         sourceDeck.addToDeck(card1);
         sourceDeck.addToDeck(card2);
