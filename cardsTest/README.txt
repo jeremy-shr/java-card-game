@@ -8,5 +8,4 @@ To execute the test suite :
 (the command above should run the thest suite with Junit4, hamcrest and all the game files as a classPath)
 
 - if you get true returned in terminal, all the tests have been executed without issue
-else : 
--if you get expected values compared to current values and false returned at the end, there was a issue with one of the tests 
+-if you get expected values compared to current values and false returned at the end, there was a failed test
