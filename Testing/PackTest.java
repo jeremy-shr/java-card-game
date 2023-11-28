@@ -56,11 +56,11 @@ public class PackTest {
     public void testNotValidPack() {
         // test by inputing 3 wrong files if the valid pack method works correctly
         Pack emptyPack = new Pack(4, "nullPack.txt");
-        assertTrue(!Pack.validPack(emptyPack.getNumberOfPlayers(), emptyPack.getPackFileName()));
+        assertFalse(Pack.validPack(emptyPack.getNumberOfPlayers(), emptyPack.getPackFileName()));
         Pack tooLargePack = new Pack(4, "tooLargePack.txt");
-        assertTrue(!Pack.validPack(tooLargePack.getNumberOfPlayers(), tooLargePack.getPackFileName()));
+        assertFalse(Pack.validPack(tooLargePack.getNumberOfPlayers(), tooLargePack.getPackFileName()));
         Pack noNumPack = new Pack(4, "tooLargePack.txt");
-        assertTrue(!Pack.validPack(noNumPack.getNumberOfPlayers(), noNumPack.getPackFileName()));
+        assertFalse(Pack.validPack(noNumPack.getNumberOfPlayers(), noNumPack.getPackFileName()));
     }
 
     public void testDistributePack() {
