@@ -58,4 +58,8 @@ public class Deck {
         return allDecks;
     }
 
+    // Define method to reset all players for new Pack distributions
+    public static void resetDecks() {
+        allDecks = new ArrayList<>();
+    }
 }
